@@ -1,7 +1,7 @@
 # Структура Репозитория
 systemd_networkd - Папка с конфигурацией systemd_networkd для статических ip адресов /etc/systemd/network  
-sites-enabled - Конфигурация nginx в http пространстве  
-nginx.conf - Основной конфигурационный файл nginx  
+/nginx/sites-enabled - Конфигурация nginx в http пространстве  
+/nginx/nginx.conf - Основной конфигурационный файл nginx  
 
 
 # Подготовка хоста к работе
@@ -16,9 +16,13 @@ nginx.conf - Основной конфигурационный файл nginx
 
 #### Задаем конфигурацию /etc/systemd/networkd для выдачи статических адресов вне DHCP
 Копируем конфигурационные файлы  
-sudo systemctl reload systemd-networkd - перезагрузка конфигурации
+sudo systemctl reload systemd-networkd - перезагрузка конфигурации  
 
-#### Задаем параметры ядра для сетевой нагрузки|базы данных
+#### Внесение изменений в параметры ядра /etc/sysctl.d
+
+
+#### Настройка IP filtering [Второстепенно]
+Написать nftabes
 
 ### Деплой nginx
 #### Структура папки /app/nginx

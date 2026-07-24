@@ -1,0 +1,52 @@
+flush ruleset
+
+table ip filter {
+
+    # SSH фильтрация
+    set allowed_ssh_clients {
+        type ipv4_addr
+    }
+
+    set allowed_ntp_servers {
+        type ipv4_addr
+    }
+
+    set allowed_repos {
+        type ipv4_addr
+    }
+
+    set blacklist_ip {
+        type ipv4_addr
+        comment "Блокируемые ip Адреса"
+    }
+
+    chain fw_input {
+        type filter hook input priority 0 ;
+        policy drop ;
+        comment "Фильтрация входящего трафика"
+
+        ct state established, related accept;
+
+        # Настройка брандмауэра для loopback интерфейса
+        meta iifname lo accept;
+
+        # Убираем blacklist плюс зацикливание loopback
+        ip saddr 127.0.0.0/8 drop;
+
+        ip saddr @blacklist_ip drop ;
+
+        # Настройки ICMP трафика
+        icmp type {echo-request, destination-unreachable, time-exceeded} accept ;
+
+        ip protocol icmp limit rate over 5/second drop ;
+
+        # Настройки портов для TCP протокола
+        tcp dport 22 ct state new limit rate 10/minute drop ;
+
+        # Настройки ssh
+        ip saddr @allowed_ssh_clients tcp dport 22 accept ;
+
+        # ООткрываем порты
+        tcp dport {80, 443} ct state new accept ;
+    }
+}
